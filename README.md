@@ -112,8 +112,6 @@ Next, we will visualize the distribution of energy consumption throughout the ho
     
 ![png](visualizations/bchydro-forecast_16_0.png)
     
-
-    
 ![png](visualizations/bchydro-forecast_17_1.png)
     
 
