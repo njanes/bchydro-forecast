@@ -95,6 +95,7 @@ The following python libraries were used in this project:
 - datetime
 - math
 
+---
 ## Exploratory Data Analysis
 ### Data Visualization
 First, let's take a look at all of the energy consumption data across all available dates:
@@ -104,71 +105,53 @@ First, let's take a look at all of the energy consumption data across all availa
     
 
 
-
-Next, we will visualize the distribution of energy consumption throughout the hours of the day, and throughout the months of the year:
-
-
-
+---
+## Time Series Cross-Validation
     
-![png](visualizations/bchydro-forecast_16_0.png)
-    
-![png](visualizations/bchydro-forecast_18_1.png)
+![png](visualizations/bchydro-forecast_14_0.png)
     
 
 
 ---
-## Time Series Cross-Validation
+## Feature Engineering
+For a more robust predictive analysis, we create and employ a function to add a number of time-based features to our data, as derived from the datetime index in our dataframe. The added features are as follows:
+- `hour`
+- `dayofweek`
+- `quarter`
+- `month`
+- `year`
+- `dayofyear`
+
+The code below creates our function:
 
 
 ```python
-tss = TimeSeriesSplit(n_splits=5, test_size=24 * 365, gap=24)
-df = df.sort_index()
+def make_features(data):
+    data = data.copy()
+    data["hour"] = data.index.hour
+    data["dayofweek"] = data.index.dayofweek
+    data["quarter"] = data.index.quarter
+    data["month"] = data.index.month
+    data["year"] = data.index.year
+    data["dayofyear"] = data.index.dayofyear
+    return data
 ```
 
 
-```python
-fig, axs = plt.subplots(5, 1, figsize=(15, 15), sharex=True)
+### Visualizing Feature Relationships
 
-fold = 0
-for train_idx, val_idx in tss.split(df):
-    train = df.iloc[train_idx]
-    test = df.iloc[val_idx]
-    train["energy_kWh"].plot(
-        ax=axs[fold],
-        label="Training Set",
-        title=f"Data Train/Test Split Fold {fold}",
-        fontsize = 14,
-        color="#05a1c6",
-    )    
-    test["energy_kWh"].plot(ax=axs[fold], label="Test Set", color="#48a739")
-    axs[fold].axvline(test.index.min(), color="black", ls="--")
-    fold += 1
-
-plt.legend(loc=(0.83, 6), fontsize=16)
-plt.xlabel("Time")
-fig.text(
-    0.05,
-    0.5,
-    "Energy Consumption (kWh)",
-    ha="center",
-    va="center",
-    rotation="vertical",
-    fontsize=18,
-)
-plt.subplots_adjust(
-    left=None, bottom=None, right=None, top=None, wspace=None, hspace=0.35
-)
-
-```
-
+Next, we will create two box plots to we will visualize the relationship between our newly added `hour` and `month` features and energy consumption. These visualizations allow us to view the distribution of energy consumption throughout the hours of the day, and throughout the months of the year.
 
     
-![png](bchydro-forecast_files/bchydro-forecast_20_0.png)
+![png](visualizations/bchydro-forecast_20_0.png)
+
+![png](visualizations/bchydro-forecast_21_1.png)
     
 
 
 ---
 ## Lag Features
+Adding lag features to our dataframe allows our model to make more robust predictions, as it effectively gives our model historical context by including historical energy consumption values as features. We will add three lag features, corresponding to one, two, and three years, or 364, 728, and 1092 days in the past respectively. 
 
 
 ```python
@@ -1011,7 +994,7 @@ plt.set_title("Energy Consumption Forecast: Week of July 13, 2020");
 
 
     
-![png](bchydro-forecast_files/bchydro-forecast_32_1.png)
+![png](bchydro-forecast_files/bchydro-forecast_33_1.png)
     
 
 
@@ -1074,7 +1057,7 @@ ax.set_title("Energy Consumption Forecast: Week of July 13, 2020");
 
 
     
-![png](bchydro-forecast_files/bchydro-forecast_36_1.png)
+![png](bchydro-forecast_files/bchydro-forecast_37_1.png)
     
 
 
@@ -1114,7 +1097,7 @@ ax.set_title("Energy Consumption Forecast: Week of January 11, 2021");
 
 
     
-![png](bchydro-forecast_files/bchydro-forecast_38_2.png)
+![png](bchydro-forecast_files/bchydro-forecast_39_2.png)
     
 
 
@@ -1122,3 +1105,4 @@ ax.set_title("Energy Consumption Forecast: Week of January 11, 2021");
 The predictions/estimates provided by the model developed in this project has the potential to offer BC Hydro several key benefits. Such insights allow for ***more efficient resource management*** by optimizing power generation and distribution, ensuring a reliable supply without overproduction or shortages. 
 
 Forecasting also supports better infrastructure planning and maintenance, reducing costs and preventing outages. Additionally, it allows for ***improved integration of renewable energy sources***, balancing demand with variable supply from sources like wind or solar. This, in addition to other predictive insights, help BC Hydro manage peak demand more effectively, offering customers cost-saving initiatives and contributing to a more sustainable energy system.
+
