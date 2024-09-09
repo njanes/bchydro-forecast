@@ -368,41 +368,6 @@ Now, let's visualize the predicted energy consumption for the week of January 11
 ![png](visualizations/bchydro-forecast_38_2.png)
 
 
-```python
-# Min, max x-axis tick labels
-dates = [11, 18]
-
-# Plotting predicted values for the week of January 11, 2021
-ax = (
-    future_w_features["pred"]
-    .loc[
-        (future_w_features["dayofyear"] >= 11) & (future_w_features["dayofyear"] <= 17)
-    ]
-    .plot(figsize=(15, 5), color="#48a739")
-)
-
-# Set plot attributes
-ax.set_xticklabels(dates)
-ax.set_ylabel("Energy Consumption (kWh)")
-ax.set_xlabel("Date (January, 2021)")
-ax.set_title("Energy Consumption Forecast: Week of January 11, 2021");
-```
-
-    C:\Users\noah8\AppData\Local\Temp\ipykernel_15408\812824184.py:11: UserWarning: set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator.
-      ax.set_xticklabels(dates)
-    
-
-
-
-
-    Text(0.5, 1.0, 'Energy Consumption Forecast: Week of January 11, 2021')
-
-
-
-
-    
-![png](bchydro-forecast_files/bchydro-forecast_39_2.png)
-    
 
 
 ## Discussion
